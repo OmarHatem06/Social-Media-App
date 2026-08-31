@@ -21,5 +21,8 @@ export const env = {
   WHITELIST: process.env.WHITELIST?.split(",") || [],
   USEREMAIL: process.env.USEREMAIL,
   EMAILPASS: process.env.EMAILPASS,
+  CLOUDE_NAME: process.env.CLOUDE_NAME as string,
+  API_KEY: process.env.API_KEY as string,
+  API_SECRET: process.env.API_SECRET as string,
 };
 export type Env = typeof env;

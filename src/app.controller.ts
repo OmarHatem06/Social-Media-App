@@ -9,10 +9,11 @@ import {
   BadRequestException,
   GlobalHandler,
 } from "./Utils/responses/error.response.js";
-import { AuthRouter } from "./modules/index.js";
+import { AuthRouter, PostRouter, UserRouter } from "./modules/index.js";
 import ConnectDB from "./DB/Connection.js";
 import { UserModel } from "./DB/models/User.model.js";
 import { GenerateHash } from "./Utils/Hashing/hash.js";
+import { CommentsRouter } from "./modules/Comments/index.js";
 
 export const bootstrap = async (): Promise<void> => {
   const app: Express = express();
@@ -22,7 +23,9 @@ export const bootstrap = async (): Promise<void> => {
     return res.status(200).json({ message: "hello" });
   });
   app.use("/auth", AuthRouter);
-
+  app.use("/posts", PostRouter);
+  app.use("/user", UserRouter);
+  app.use("/comments", CommentsRouter);
   app.use(GlobalHandler);
   app.listen(env.PORT, () => {
     console.log(`app is running on port ${env.PORT} in ${env.MODE} mode`);

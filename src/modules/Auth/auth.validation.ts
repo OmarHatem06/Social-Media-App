@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RoleEnum } from "../../Utils/enums/user.enums.js";
 
 export const LoginSchema = {
   body: z.strictObject({
@@ -23,7 +24,7 @@ export const SignUpSchema = {
         .min(8, { error: "minimum is 8" })
         .max(20, { error: "maximum is 20" }),
 
-      Role: z.enum(["USER", "ADMIN"]).default("USER"),
+      role: z.enum(RoleEnum).default(RoleEnum.USER).optional(),
       Gender: z.enum(["MALE", "FEMALE"]).default("MALE"),
     })
     .superRefine((data, ctx) => {

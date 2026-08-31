@@ -6,25 +6,35 @@ import { sendEmailEvent } from "../../Utils/Events/sendEmail.evens.js";
 import { GenerateOTP } from "../../Utils/generateOTP/OTP.js";
 import { GenerateHash, VerifyHash } from "../../Utils/Hashing/hash.js";
 import { getCredintials } from "../../Utils/tokens/tokens.js";
+import { RoleEnum } from "../../Utils/enums/user.enums.js";
 class AuthService {
   constructor() {}
   signUp = async (req: Request, res: Response): Promise<Response> => {
-    const { username, email, password, ConfirmPassword }: ISignUpDTO = req.body;
+    const {
+      username,
+      email,
+      password,
+      ConfirmPassword,
+      role = RoleEnum.USER,
+    }: ISignUpDTO = req.body;
 
     const checkemail = await UserModel.findOne({ email }).select("email");
     if (checkemail) {
       throw new BadRequestException("email already exists");
     }
-    const hashedPassword = await GenerateHash(password);
+    const checkUsername = await UserModel.findOne({ username });
+    if (checkUsername) throw new BadRequestException("username already taken");
+   // const hashedPassword = await GenerateHash(password);
     const otp = GenerateOTP();
-    const hashedotp = await GenerateHash(otp);
+   // const hashedotp = await GenerateHash(otp);
     console.log("otp", otp);
 
     const user = await UserModel.create({
       username,
       email,
-      password: String(hashedPassword),
-      ConfirmEmailOTP: String(hashedotp),
+      password,
+      ConfirmEmailOTP: otp,
+      role: String(role),
     });
     sendEmailEvent.emit("confirm email", {
       data: {
