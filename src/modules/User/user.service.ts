@@ -171,7 +171,7 @@ class UserService {
   searchUser = async (req: Request, res: Response) => {
     const { search }: searchDTo = req.query as { search: string };
     const users = await UserModel.find({
-      username: { $regex: search, $options: "i", $nin: req.user!.blockedBy },
+      username: { $regex: search, $options: "i" },
       _id: { $nin: req.user!.blockedBy && req.user!.blockedUsers },
     });
     if (users.length == 0)
