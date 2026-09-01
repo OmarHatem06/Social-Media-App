@@ -87,7 +87,7 @@ class UserService {
   removeFriends = async (req: Request, res: Response) => {
     const { userId }: IuserPostDTO = req.params as { userId: string };
     const myId = req.user!._id;
-    if (!userId || !myId) throw new BadRequestException("user not found");
+    if (!userId) throw new BadRequestException("user not found");
     await Promise.all([
       UserModel.updateOne({ _id: userId }, { $pull: { friends: myId } }),
       UserModel.updateOne(
