@@ -48,10 +48,12 @@ class CommentService {
     deleteComment = async (req, res) => {
         const { CommentId } = req.params;
         const comment = await CommentsModel.findById(CommentId);
+        const post = await PostModel.findById(comment?.postId);
         if (!comment)
             throw new BadRequestException("comment not found");
-        if (!comment.createdBy.equals(req.user._id)) {
-            throw new BadRequestException("u are not authorized to edit this comment");
+        if (!comment.createdBy.equals(req.user._id) &&
+            !post?.createdBy.equals(req.user._id)) {
+            throw new BadRequestException("u are not authorized to delete this comment");
         }
         const DeleteComment = await CommentsModel.deleteOne({ _id: CommentId });
         return res.status(200).json({ message: "deleted succesfully" });

@@ -4,9 +4,8 @@ import mongoose, { Schema, Types, type HydratedDocument } from "mongoose";
 import { GenerateHash } from "../../Utils/Hashing/hash.js";
 export interface IUser {
   _id: Types.ObjectId;
-  firstname: string;
-  lastname: string;
   email: string;
+  username: string;
   ConfirmEmailOTP?: string;
   ConfirmedAt?: Date;
   password: string;
@@ -17,7 +16,7 @@ export interface IUser {
   updatedAt: Date;
   role?: string;
   gender: string;
-  username?: string;
+
   otp?: string;
   friends?: Types.ObjectId[];
   blockedUsers?: Types.ObjectId[];

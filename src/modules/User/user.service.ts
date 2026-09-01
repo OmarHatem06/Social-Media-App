@@ -172,7 +172,13 @@ class UserService {
     const { search }: searchDTo = req.query as { search: string };
     const users = await UserModel.find({
       username: { $regex: search, $options: "i" },
-      _id: { $nin: req.user!.blockedBy && req.user!.blockedUsers },
+
+      _id: {
+        $nin: [
+          ...(req.user?.blockedBy ?? []),
+          ...(req.user?.blockedUsers ?? []),
+        ],
+      },
     });
     if (users.length == 0)
       return res.status(404).json({ message: "user not found" });

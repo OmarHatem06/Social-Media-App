@@ -63,10 +63,14 @@ class CommentService {
   deleteComment = async (req: Request, res: Response) => {
     const { CommentId }: IDeleteCommentId = req.params as { CommentId: string };
     const comment = await CommentsModel.findById(CommentId);
+    const post = await PostModel.findById(comment?.postId);
     if (!comment) throw new BadRequestException("comment not found");
-    if (!comment.createdBy.equals(req.user!._id)) {
+    if (
+      !comment.createdBy.equals(req.user!._id) &&
+      !post?.createdBy.equals(req.user!._id)
+    ) {
       throw new BadRequestException(
-        "u are not authorized to edit this comment",
+        "u are not authorized to delete this comment",
       );
     }
     const DeleteComment = await CommentsModel.deleteOne({ _id: CommentId });
