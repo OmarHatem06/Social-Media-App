@@ -73,7 +73,7 @@ class UserService {
     removeFriends = async (req, res) => {
         const { userId } = req.params;
         const myId = req.user._id;
-        if (!userId || !myId)
+        if (!userId)
             throw new BadRequestException("user not found");
         await Promise.all([
             UserModel.updateOne({ _id: userId }, { $pull: { friends: myId } }),
@@ -133,8 +133,13 @@ class UserService {
     searchUser = async (req, res) => {
         const { search } = req.query;
         const users = await UserModel.find({
-            username: { $regex: search, $options: "i", $nin: req.user.blockedBy },
-            _id: { $nin: req.user.blockedBy && req.user.blockedUsers },
+            username: { $regex: search, $options: "i" },
+            _id: {
+                $nin: [
+                    ...(req.user?.blockedBy ?? []),
+                    ...(req.user?.blockedUsers ?? []),
+                ],
+            },
         });
         if (users.length == 0)
             return res.status(404).json({ message: "user not found" });

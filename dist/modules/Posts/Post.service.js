@@ -73,7 +73,12 @@ class PostService {
     };
     getallPosts = async (req, res) => {
         const posts = await PostModel.find({
-            createdBy: { $nin: req.user.blockedBy && req.user.blockedUsers },
+            createdBy: {
+                $nin: [
+                    ...(req.user.blockedBy ?? []),
+                    ...(req.user.blockedUsers ?? []),
+                ],
+            },
         }).populate("createdBy", "email firstname lastname");
         if (posts.length == 0)
             return res.status(404).json({ message: "Nothing on your feed" });
